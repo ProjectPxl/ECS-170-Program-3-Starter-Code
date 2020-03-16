@@ -27,6 +27,7 @@ replay_buffer = ReplayBuffer(100000)
 model = QLearner(env, num_frames, batch_size, gamma, replay_buffer)
 model.load_state_dict(torch.load("model_pretrained.pth", map_location='cpu'))
 
+
 target_model = QLearner(env, num_frames, batch_size, gamma, replay_buffer)
 target_model.copy_from(model)
 
@@ -81,5 +82,17 @@ for frame_idx in range(1, num_frames + 1):
     if frame_idx % 50000 == 0:
         target_model.copy_from(model)
 
+    if frame_idx % 1000 == 0:
+        #PART 4.1
+        print ("frame: ",frame_idx, " - saving new model")
+        torch.save(model.state_dict(), "new_model.pth")
+        #PART 4.2
+        np.save('losses-itr.npy', losses)
+        np.save('rewards-itr.npy', all_rewards)
 
+#PART 4.2 again if loop finishes.
+np.save('losses.npy', losses)
+np.save('rewards.npy', all_rewards)
 
+# data = np.load('losses.npy')
+# print(data)
